@@ -16,9 +16,11 @@ Wydarzenia.
 - Oberżysta może odejść z wioski, jeśli braknie dla niego towarów lub braknie rycerzy.
 - Handlarz może odejść, jeśli nic nie sprzeda.
 - Handlarz zdobywa towary w innym mieście (rzut kostką).
-- Rycerz zabiera 1 ilość towaru podczas pobytu w karczmie.
-- Oberżysta i dama serca kupują losową ilość towarów (rzut kostką).
+- Rycerz zabiera 1 ilość pożywienia lub napitku podczas pobytu w karczmie.
+- Oberżysta kupuje losową ilość napitku oraz losową ilość pożywienia (rzut kostką).
+- Dama kupuje losową ilość biżuterii.
 
 Ogólnie.
+- towary dzielą się na: napitek, pożywienie, biżuterię
 - handlarze mają współdzieloną ilość towarów (pracują w jednym cechu), podobnie karczmarze (pracują w jednej karczmie), jednak każda z dam serca posiada osobne towary
-- ilość rycerzy, oberżystów, handlarzy, dam serca i towarów jest ustalana podobnie jak w poprzedniej pracowni
+- ilość rycerzy, oberżystów, handlarzy, dam serca i poszczególnych towarów jest ustalana podobnie jak w poprzedniej pracowni
