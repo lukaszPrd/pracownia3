@@ -23,4 +23,5 @@ Wydarzenia.
 Ogólnie.
 - towary dzielą się na: napitek, pożywienie, biżuterię
 - handlarze mają współdzieloną ilość towarów (pracują w jednym cechu), podobnie karczmarze (pracują w jednej karczmie), jednak każda z dam serca posiada osobne towary
-- ilość rycerzy, oberżystów, handlarzy, dam serca i poszczególnych towarów jest ustalana podobnie jak w poprzedniej pracowni
+- ilość rycerzy, oberżystów, handlarzy, dam serca, ilosc miejsc w karczmie i poszczególnych towarów jest ustalana podobnie jak w poprzedniej pracowni
+- miejsca w karczmie są ograniczone. Jeśli rycerz przyjdzie do karczmy i będą wolne miejsca i będzie go miał kto obsłużyc, zostaje obsłużony. Jeęli nie będzie go miał kto obsłużyc, czeka na swoim miejscu na obsługę. Jeśli nie będzie wolnych miejsc, czeka aż się jakieś zwolni. Gdy miejsce się zwolni, pierwszy zajmuje je ten. kto najdłużej czeka.
