@@ -59,6 +59,29 @@ int throwDice(){
     return rand()%6+1;
 }
 
+void get_new_wares(){
+    pthread_mutex_lock(&mutex_resources);
+    int val = throwDice();
+    char *type;
+    switch(val){
+    case 1:
+    case 2:
+        type = "drink";
+        break;
+    case 3:
+    case 4:
+        type = "food";
+        break;
+    default:
+        type = "gem";
+        break;
+    }
+    for(int i=val;i>0;i--){
+        add_to_list(first, type);
+    }
+    pthread_mutex_unlock(&mutex_resources);
+}
+
 void visit_lady();
 void fight();
 void buy_wares();
@@ -83,6 +106,7 @@ void *lady(void *vargp){
 };
 
 void *shopkeeper(void *vargp){
+    get_new_wares();
     usleep(500);
     pthread_exit(NULL);
     return NULL;
