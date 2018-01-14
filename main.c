@@ -105,6 +105,10 @@ void *knight(void *vargp){
 };
 
 void *innkeeper(void *vargp){
+    if(buy_wares("drink"))
+        printf("Innkeeper bought drink!\n");
+    if(buy_wares("food"))
+        printf("Innkeeper bought food!\n");
     usleep(500);
     pthread_exit(NULL);
     return NULL;
@@ -115,7 +119,7 @@ void *lady(void *vargp){
         ladies--;
         printf("Lady left the village!\n");
     }else{
-        printf("Lady bought gem!\n");
+        printf("Lady bought gems!\n");
     }
     usleep(500);
     pthread_exit(NULL);
