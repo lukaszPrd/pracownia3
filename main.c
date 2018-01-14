@@ -66,14 +66,14 @@ void get_new_wares(){
     switch(val){
     case 1:
     case 2:
-        type = "drink";
+        type = "gem";
         break;
     case 3:
     case 4:
         type = "food";
         break;
     default:
-        type = "gem";
+        type = "drink";
         break;
     }
     for(int i=val;i>0;i--){
@@ -86,9 +86,16 @@ void get_new_wares(){
 void visit_lady();
 void fight();
 
-void buy_wares(char *type;){
+bool buy_wares(char *type;){
     pthread_mutex_lock(&mutex_resources);
+    if(delete_from_list(first, "gem")){
+        pthread_mutex_unlock(&mutex_resources);
+        printf("Lady bought gem!\n");
+        return true;
+    }
     pthread_mutex_unlock(&mutex_resources);
+    printf("Lady could not buy gem!\n");
+    return false;
 }
 
 void serve();
@@ -106,7 +113,10 @@ void *innkeeper(void *vargp){
 };
 
 void *lady(void *vargp){
-    buy_wares();
+    if(!buy_wares()){
+        ladies--;
+        printf("Lady left the village!\n");
+    }
     usleep(500);
     pthread_exit(NULL);
     return NULL;
