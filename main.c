@@ -79,12 +79,18 @@ void get_new_wares(){
     for(int i=val;i>0;i--){
         add_to_list(first, type);
     }
+    printf("Shopkeeper gained %d %s!\n", val, type);
     pthread_mutex_unlock(&mutex_resources);
 }
 
 void visit_lady();
 void fight();
-void buy_wares();
+
+void buy_wares(char *type;){
+    pthread_mutex_lock(&mutex_resources);
+    pthread_mutex_unlock(&mutex_resources);
+}
+
 void serve();
 
 void *knight(void *vargp){
@@ -100,6 +106,7 @@ void *innkeeper(void *vargp){
 };
 
 void *lady(void *vargp){
+    buy_wares();
     usleep(500);
     pthread_exit(NULL);
     return NULL;
