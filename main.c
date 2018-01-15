@@ -83,17 +83,17 @@ void get_new_wares(){
     pthread_mutex_unlock(&mutex_resources);
 }
 
-bool buy_wares(char *type){
+int buy_wares(char *type){
     pthread_mutex_lock(&mutex_resources);
     int val = throwDice();
     for(int i=val;i>0;i--){
         if(!delete_from_list(first, type)){
             pthread_mutex_unlock(&mutex_resources);
-            return false;
+            return 0;
         }
     }
     pthread_mutex_unlock(&mutex_resources);
-    return true;
+    return val;
 }
 
 void serve();
@@ -105,17 +105,23 @@ void *knight(void *vargp){
 };
 
 void *innkeeper(void *vargp){
-    if(buy_wares("drink"))
-        printf("Innkeeper bought drink!\n");
-    if(buy_wares("food"))
+    int bought_drinks = buy_wares("drink");
+    int bought_food = buy_wares("food");
+    if(bought_drinks>0){
+        drinks++;
+        printf("Innkeeper bought drinks!\n");
+    }
+    if(bought_food>0){
+        food++;
         printf("Innkeeper bought food!\n");
+    }
     usleep(500);
     pthread_exit(NULL);
     return NULL;
 };
 
 void *lady(void *vargp){
-    if(!buy_wares("gem")){
+    if(buy_wares("gem")==0){
         ladies--;
         printf("Lady left the village!\n");
     }else{
@@ -184,6 +190,8 @@ int main(int argc, char *argv[])
     for (int i=drinks;i>0;i--) {
         add_to_list(first,"drink");
     }
+    drinks = 0;
+    food = 0;
     pthread_mutex_init(&mutex_resources, NULL);
     pthread_mutex_init(&mutex_knight, NULL);
     pthread_mutex_init(&mutex_shopkeeper, NULL);
