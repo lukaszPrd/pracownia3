@@ -6,10 +6,11 @@
 #include <unistd.h>
 
 int innkeepers, knights, shopkeepers, ladies, seats, drinks, food, gems;
+int taken_seats = 0;
 
 pthread_mutex_t mutex_resources = PTHREAD_MUTEX_INITIALIZER;
-pthread_mutex_t mutex_knight = PTHREAD_MUTEX_INITIALIZER;
-pthread_mutex_t mutex_shopkeeper = PTHREAD_MUTEX_INITIALIZER;
+pthread_mutex_t mutex_tavern = PTHREAD_MUTEX_INITIALIZER;
+pthread_mutex_t mutex_seats = PTHREAD_MUTEX_INITIALIZER;
 pthread_mutex_t mutex_lady = PTHREAD_MUTEX_INITIALIZER;
 pthread_mutex_t mutex_innkeeper = PTHREAD_MUTEX_INITIALIZER;
 pthread_mutex_t mutex_day = PTHREAD_MUTEX_INITIALIZER;
@@ -96,7 +97,29 @@ int buy_wares(char *type){
     return val;
 }
 
-void serve();
+void serve(){
+    if(food>0){
+        food--;
+        printf("Innkeeper served knight with food!\n");
+        taken_seats--;
+    }else if(drinks>0){
+        drinks--;
+        printf("Innkeeper served knight with drink!\n");
+        taken_seats--;
+    }
+};
+
+void visit_tavern(){
+    pthread_mutex_lock(&mutex_seats);
+    while(true){
+        if(taken_seats<seats){
+            printf("Knight went to the tavern and waits for innkeeper!\n");
+            taken_seats++;
+            pthread_mutex_unlock(&mutex_seats);
+            break;
+        }
+    }
+}
 
 void *knight(void *vargp){
     usleep(500);
@@ -193,8 +216,8 @@ int main(int argc, char *argv[])
     drinks = 0;
     food = 0;
     pthread_mutex_init(&mutex_resources, NULL);
-    pthread_mutex_init(&mutex_knight, NULL);
-    pthread_mutex_init(&mutex_shopkeeper, NULL);
+    pthread_mutex_init(&mutex_tavern, NULL);
+    pthread_mutex_init(&mutex_seats, NULL);
     pthread_mutex_init(&mutex_lady, NULL);
     pthread_mutex_init(&mutex_innkeeper, NULL);
     pthread_mutex_init(&mutex_day, NULL);
