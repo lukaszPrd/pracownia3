@@ -7,6 +7,7 @@
 
 int innkeepers, knights, shopkeepers, ladies, seats, drinks, food, gems;
 int taken_seats = 0;
+bool closed;
 
 pthread_mutex_t mutex_resources = PTHREAD_MUTEX_INITIALIZER;
 pthread_mutex_t mutex_tavern = PTHREAD_MUTEX_INITIALIZER;
@@ -98,14 +99,22 @@ int buy_wares(char *type){
 }
 
 void serve(){
-    if(food>0){
-        food--;
-        printf("Innkeeper served knight with food!\n");
-        taken_seats--;
-    }else if(drinks>0){
-        drinks--;
-        printf("Innkeeper served knight with drink!\n");
-        taken_seats--;
+    while(!closed){
+        if(taken_seats>0){
+            if(food>0){
+                food--;
+                printf("Innkeeper served knight with food!\n");
+                taken_seats--;
+            }else if(drinks>0){
+                drinks--;
+                printf("Innkeeper served knight with drink!\n");
+                taken_seats--;
+            }else{
+                innkeepers--;
+                printf("Innkeeper left the village!\n");
+                break;
+            }
+        }
     }
 };
 
@@ -118,10 +127,17 @@ void visit_tavern(){
             pthread_mutex_unlock(&mutex_seats);
             break;
         }
+        if(closed){
+            printf("Knight left the village!\n");
+            knights--;
+            pthread_mutex_unlock(&mutex_seats);
+            break;
+        }
     }
 }
 
 void *knight(void *vargp){
+    visit_tavern();
     usleep(500);
     pthread_exit(NULL);
     return NULL;
@@ -157,6 +173,7 @@ void *lady(void *vargp){
 
 void *shopkeeper(void *vargp){
     get_new_wares();
+    serve();
     usleep(500);
     pthread_exit(NULL);
     return NULL;
@@ -227,6 +244,7 @@ int main(int argc, char *argv[])
             printf("Your village lasted %d days!\n", d-1);
             break;
         }
+        closed = false;
         playDay(d);
         pthread_mutex_unlock(&mutex_day);
     }
