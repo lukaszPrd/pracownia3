@@ -111,13 +111,7 @@ void serve(){
                 printf("Innkeeper served knight with drink!\n");
                 taken_seats--;
                 printf("Knight left tavern!\n");
-            }else{
-                innkeepers--;
-                printf("Innkeeper left the village!\n");
-                break;
             }
-        }else{
-            closed=true;
         }
     }
 };
@@ -125,19 +119,27 @@ void serve(){
 void visit_tavern(){
     pthread_mutex_lock(&mutex_seats);
     while(true){
-        if(taken_seats<seats){
-            printf("Knight went to the tavern and waits for innkeeper!\n");
-            taken_seats++;
-            pthread_mutex_unlock(&mutex_seats);
-            break;
-        }
         if(closed){
             printf("Knight left the village!\n");
             knights--;
             pthread_mutex_unlock(&mutex_seats);
             break;
         }
+        if(taken_seats<seats){
+            printf("Knight went to the tavern and waits for innkeeper!\n");
+            taken_seats++;
+            pthread_mutex_unlock(&mutex_seats);
+            break;
+        }
+
     }
+}
+
+void *tavern(void *vargp){
+    usleep(10000);
+    closed=true;
+    pthread_exit(NULL);
+    return NULL;
 }
 
 void *knight(void *vargp){
@@ -158,7 +160,6 @@ void *innkeeper(void *vargp){
         food++;
         printf("Innkeeper bought food!\n");
     }
-    closed = false;
     serve();
     if(knights==0){
         innkeepers--;
@@ -182,11 +183,11 @@ void *lady(void *vargp){
 };
 
 void *shopkeeper(void *vargp){
+    get_new_wares();
     if(ladies==0 && innkeepers==0){
         shopkeepers--;
         printf("Shopkeeper left the village!\n");
     }
-    get_new_wares();
     usleep(500);
     pthread_exit(NULL);
     return NULL;
@@ -198,6 +199,7 @@ void playDay(int d)
     pthread_t tid2;
     pthread_t tid3;
     pthread_t tid4;
+    pthread_t tid5;
     for(int i=1; i<=innkeepers; i++){
         pthread_create(&tid1, NULL, innkeeper, NULL);
     }
@@ -210,10 +212,15 @@ void playDay(int d)
     for(int i=1; i<=ladies; i++){
         pthread_create(&tid4, NULL, lady, NULL);
     }
+    pthread_create(&tid5, NULL, tavern, NULL);
     pthread_join(tid1, NULL);
     pthread_join(tid2, NULL);
     pthread_join(tid3, NULL);
     pthread_join(tid4, NULL);
+    pthread_join(tid5, NULL);
+    while(!closed){
+        //log?
+    }
     printf("Day %d ended!\n", d);
 }
 
@@ -253,6 +260,7 @@ int main(int argc, char *argv[])
     pthread_mutex_init(&mutex_day, NULL);
     for (int d=1;d<=365;d++){
         pthread_mutex_lock(&mutex_day);
+        closed = false;
         if(innkeepers==0 && knights==0 && shopkeepers==0 && ladies==0){
             printf("Your village lasted %d days!\n", d-1);
             break;
