@@ -105,15 +105,19 @@ void serve(){
                 food--;
                 printf("Innkeeper served knight with food!\n");
                 taken_seats--;
+                printf("Knight left tavern!\n");
             }else if(drinks>0){
                 drinks--;
                 printf("Innkeeper served knight with drink!\n");
                 taken_seats--;
+                printf("Knight left tavern!\n");
             }else{
                 innkeepers--;
                 printf("Innkeeper left the village!\n");
                 break;
             }
+        }else{
+            closed=true;
         }
     }
 };
@@ -154,13 +158,19 @@ void *innkeeper(void *vargp){
         food++;
         printf("Innkeeper bought food!\n");
     }
+    closed = false;
+    serve();
+    if(knights==0){
+        innkeepers--;
+        printf("Innkeeper left the village!\n");
+    }
     usleep(500);
     pthread_exit(NULL);
     return NULL;
 };
 
 void *lady(void *vargp){
-    if(buy_wares("gem")==0){
+    if(shopkeepers==0 || buy_wares("gem")==0){
         ladies--;
         printf("Lady left the village!\n");
     }else{
@@ -172,8 +182,11 @@ void *lady(void *vargp){
 };
 
 void *shopkeeper(void *vargp){
+    if(ladies==0 && innkeepers==0){
+        shopkeepers--;
+        printf("Shopkeeper left the village!\n");
+    }
     get_new_wares();
-    serve();
     usleep(500);
     pthread_exit(NULL);
     return NULL;
@@ -244,7 +257,6 @@ int main(int argc, char *argv[])
             printf("Your village lasted %d days!\n", d-1);
             break;
         }
-        closed = false;
         playDay(d);
         pthread_mutex_unlock(&mutex_day);
     }
