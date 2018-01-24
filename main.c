@@ -88,16 +88,12 @@ void get_new_wares(){
 
 int buy_wares(char *type){
     pthread_mutex_lock(&mutex_resources);
-    srand(time(0));
-    int val = throwDice();
-    for(int i=val;i>0;i--){
-        if(!delete_from_list(first, type)){
-            pthread_mutex_unlock(&mutex_resources);
-            return 0;
-        }
+    if(!delete_from_list(first, type)){
+        pthread_mutex_unlock(&mutex_resources);
+        return 0;
     }
     pthread_mutex_unlock(&mutex_resources);
-    return val;
+    return 1;
 }
 
 void serve(){
@@ -170,13 +166,11 @@ void *knight(void *vargp){
 };
 
 void *innkeeper(void *vargp){
-    int bought_drinks = buy_wares("drink");
-    int bought_food = buy_wares("food");
-    if(bought_drinks>0){
+    if(buy_wares("drink")==1){
         drinks++;
         printf("Innkeeper bought drinks!\n");
     }
-    if(bought_food>0){
+    if(buy_wares("food")==1){
         food++;
         printf("Innkeeper bought food!\n");
     }
@@ -282,17 +276,17 @@ int main(int argc, char *argv[])
     for (int d=1;d<=365;d++){
         if(innkeepers==0 && knights==0 && shopkeepers==0 && ladies==0){
             printf("Your village lasted %d days!\n", d-1);
-            if(d==366){
-                printf("Your village lasted with: \n");
-                printf("%d knights!\n", knights);
-                printf("%d ladies!\n", ladies);
-                printf("%d innkeepers!\n", innkeepers);
-                printf("%d shopkeepers!\n", shopkeepers);
-            }
             break;
         }
         printf("Tavern opened!\n");
         playDay(d);
+        if(d==366){
+            printf("Your village lasted with: \n");
+            printf("%d knights!\n", knights);
+            printf("%d ladies!\n", ladies);
+            printf("%d innkeepers!\n", innkeepers);
+            printf("%d shopkeepers!\n", shopkeepers);
+        }
     }
     return 0;
 }
