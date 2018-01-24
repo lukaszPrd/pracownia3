@@ -13,8 +13,6 @@ bool closed = false;
 pthread_mutex_t mutex_resources = PTHREAD_MUTEX_INITIALIZER;
 pthread_mutex_t mutex_tavern = PTHREAD_MUTEX_INITIALIZER;
 pthread_mutex_t mutex_seats = PTHREAD_MUTEX_INITIALIZER;
-pthread_mutex_t mutex_lady = PTHREAD_MUTEX_INITIALIZER;
-pthread_mutex_t mutex_innkeeper = PTHREAD_MUTEX_INITIALIZER;
 pthread_mutex_t mutex_day = PTHREAD_MUTEX_INITIALIZER;
 
 typedef struct element {
@@ -271,8 +269,6 @@ int main(int argc, char *argv[])
     pthread_mutex_init(&mutex_resources, NULL);
     pthread_mutex_init(&mutex_tavern, NULL);
     pthread_mutex_init(&mutex_seats, NULL);
-    pthread_mutex_init(&mutex_lady, NULL);
-    pthread_mutex_init(&mutex_innkeeper, NULL);
     pthread_mutex_init(&mutex_day, NULL);
     for (int d=1;d<=365;d++){
         if(innkeepers==0 && knights==0 && shopkeepers==0 && ladies==0){
@@ -281,7 +277,7 @@ int main(int argc, char *argv[])
         }
         printf("Tavern opened!\n");
         playDay(d);
-        if(d==366){
+        if(d==365){
             printf("Your village lasted with: \n");
             printf("%d knights!\n", knights);
             printf("%d ladies!\n", ladies);
